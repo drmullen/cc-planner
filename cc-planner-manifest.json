@@ -1,0 +1,56 @@
+{
+  "name": "CC Planner Pro - COVID Protection Manager",
+  "short_name": "CC Planner",
+  "description": "Smart inventory manager for COVID-19 protection supplies and multi-layer defense planning. Designed by Dr. Sean P. Mullen",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "author": "Dr. Sean P. Mullen",
+  "publisher": "Mind to Motion Studios, LLC",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#003d3f",
+  "theme_color": "#003d3f",
+  "orientation": "any",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": ["health", "medical", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Item",
+      "short_name": "Add",
+      "description": "Add new inventory item",
+      "url": "/?action=add"
+    },
+    {
+      "name": "View Alerts",
+      "short_name": "Alerts",
+      "description": "View replacement alerts",
+      "url": "/?page=alerts"
+    },
+    {
+      "name": "Resources",
+      "short_name": "Resources",
+      "description": "Science facts and tools",
+      "url": "/?page=resources"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "features": [
+    "Cross Platform",
+    "Offline Capable",
+    "Secure Storage",
+    "Data Export",
+    "Science-Based",
+    "Community-Driven"
+  ]
+}

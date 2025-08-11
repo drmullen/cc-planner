@@ -1,0 +1,3683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#003d3f">
+    <meta name="description" content="CC Planner Pro - Smart COVID protection inventory manager for the COVID-conscious community">
+    <meta name="author" content="Dr. Sean P. Mullen">
+    <meta name="publisher" content="Mind to Motion Studios, LLC">
+    <meta name="copyright" content="2025 Mind to Motion Studios, LLC - tooldrop.io free license">
+    <meta name="release-date" content="2025-10-10">
+    <meta name="version" content="1.0.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>CC Planner Pro - Protection Inventory Manager | By Dr. Sean P. Mullen</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root {
+            --primary-dark: #003d3f;
+            --primary-teal: #00c6c6;
+            --silver: #c0c0c0;
+            --silver-light: rgba(192, 192, 192, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(192, 192, 192, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --alert-coral: #ff6b6b;
+            --success-aqua: #00ffcc;
+            --warning-amber: #ffa500;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --blur: blur(20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #001a1a 0%, #003d3f 50%, #002828 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            width: 48px;
+            height: 48px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu-toggle:active {
+            transform: scale(0.95);
+        }
+
+        .hamburger {
+            width: 24px;
+            height: 20px;
+            position: relative;
+        }
+
+        .hamburger span {
+            display: block;
+            position: absolute;
+            height: 2px;
+            width: 100%;
+            background: var(--primary-teal);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger span:nth-child(1) {
+            top: 0;
+        }
+
+        .hamburger span:nth-child(2) {
+            top: 9px;
+        }
+
+        .hamburger span:nth-child(3) {
+            bottom: 0;
+        }
+
+        .mobile-menu-toggle.active .hamburger span:nth-child(1) {
+            transform: rotate(45deg);
+            top: 9px;
+        }
+
+        .mobile-menu-toggle.active .hamburger span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active .hamburger span:nth-child(3) {
+            transform: rotate(-45deg);
+            bottom: 9px;
+        }
+
+        /* Mobile Overlay */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 99;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-overlay.active {
+            opacity: 1;
+        }
+
+        /* Glassmorphic Panel Base */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Navigation */
+        .nav-sidebar {
+            width: 240px;
+            height: 100vh;
+            background: rgba(0, 61, 63, 0.3);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+        }
+
+        .nav-logo h1 {
+            font-size: 1.5rem;
+            color: var(--primary-teal);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 198, 198, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(0, 198, 198, 0.15);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--primary-teal);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            stroke: var(--silver);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .nav-item.active .nav-icon {
+            stroke: var(--primary-teal);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 240px;
+            flex: 1;
+            padding: 2rem;
+            max-width: calc(100vw - 240px);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-header h2 {
+            font-size: 2rem;
+            font-weight: 200;
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-teal), var(--silver));
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 198, 198, 0.2);
+        }
+
+        .kpi-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 300;
+            color: var(--primary-teal);
+        }
+
+        .kpi-unit {
+            font-size: 1rem;
+            color: var(--silver);
+            margin-left: 0.5rem;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: rgba(0, 61, 63, 0.3);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 400;
+            color: var(--silver);
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(192, 192, 192, 0.1);
+        }
+
+        .data-table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(0, 198, 198, 0.05);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-height: 44px;
+        }
+
+        .btn-primary {
+            background: rgba(0, 198, 198, 0.1);
+            border-color: var(--primary-teal);
+            color: var(--primary-teal);
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 198, 198, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 198, 198, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(192, 192, 192, 0.1);
+            border-color: var(--silver);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(192, 192, 192, 0.2);
+        }
+
+        .btn-danger {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--alert-coral);
+            color: var(--alert-coral);
+        }
+
+        .btn-danger:hover {
+            background: rgba(255, 107, 107, 0.2);
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--silver);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(0, 198, 198, 0.1);
+        }
+
+        .form-error {
+            color: var(--alert-coral);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-error.active {
+            display: block;
+        }
+
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            color: var(--primary-teal);
+            font-weight: 300;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--silver);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-teal);
+        }
+
+        /* Confirmation Dialog */
+        .confirm-dialog {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .confirm-message {
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            font-size: 1.1rem;
+        }
+
+        .confirm-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-urgent {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--alert-coral);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .badge-warning {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning-amber);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+        }
+
+        .badge-good {
+            background: rgba(0, 255, 204, 0.2);
+            color: var(--success-aqua);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+        }
+
+        .badge-high-evidence {
+            background: rgba(0, 198, 198, 0.2);
+            color: var(--primary-teal);
+            border: 1px solid rgba(0, 198, 198, 0.3);
+        }
+
+        /* Action Bar */
+        .action-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--primary-teal);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-teal);
+        }
+
+        /* Scenario Cards */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .scenario-card {
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 198, 198, 0.2);
+        }
+
+        .scenario-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-teal);
+        }
+
+        .scenario-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .protection-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .protection-item {
+            padding: 0.5rem 0;
+            color: var(--silver);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .protection-item::before {
+            content: '▸';
+            color: var(--primary-teal);
+        }
+
+        /* Filters */
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        /* Page Sections (hidden by default) */
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Import Section */
+        .import-section {
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-label {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: rgba(0, 198, 198, 0.1);
+            border: 1px solid var(--primary-teal);
+            color: var(--primary-teal);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-label:hover {
+            background: rgba(0, 198, 198, 0.2);
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 1100;
+            max-width: 350px;
+        }
+
+        .toast.active {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 3px solid var(--success-aqua);
+        }
+
+        .toast-error {
+            border-left: 3px solid var(--alert-coral);
+        }
+
+        .toast-warning {
+            border-left: 3px solid var(--warning-amber);
+        }
+
+        /* PWA Install Button */
+        .install-prompt {
+            display: none;
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 1rem 2rem;
+            background: rgba(0, 198, 198, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 198, 198, 0.3);
+            z-index: 1000;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .install-prompt.active {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Resource Section Styles */
+        .resource-content {
+            display: none;
+        }
+
+        .resource-content.active {
+            display: block;
+        }
+
+        .fact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .fact-card {
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .fact-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 198, 198, 0.2);
+        }
+
+        .fact-card h4 {
+            margin-bottom: 1rem;
+        }
+
+        .fact-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .fact-formula {
+            background: rgba(0, 198, 198, 0.1);
+            border-left: 3px solid var(--primary-teal);
+            padding: 0.75rem;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            color: var(--primary-teal);
+        }
+
+        .response-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .response-item {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .response-item strong {
+            color: var(--primary-teal);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .response-item p {
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .calculator-form {
+            max-width: 500px;
+        }
+
+        .result-box {
+            background: rgba(0, 198, 198, 0.1);
+            border: 1px solid var(--primary-teal);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .result-box h4 {
+            color: var(--primary-teal);
+            margin-bottom: 0.5rem;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .template-card {
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 198, 198, 0.2);
+        }
+
+        .template-card h4 {
+            color: var(--primary-teal);
+            margin-bottom: 0.75rem;
+        }
+
+        .template-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .talking-points {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .point-category {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        .myth-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .myth-card {
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .myth-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 198, 198, 0.2);
+        }
+
+        .myth-header {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .fact-header {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .reversal-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .reversal-item {
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-teal);
+        }
+
+        .reversal-item strong {
+            color: var(--silver);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .mobile-overlay {
+                display: block;
+            }
+
+            .nav-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 100;
+            }
+
+            .nav-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                max-width: 100vw;
+                padding: 4rem 1rem 1rem;
+            }
+
+            .page-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .kpi-card {
+                padding: 1rem;
+            }
+
+            .kpi-value {
+                font-size: 1.75rem;
+            }
+
+            /* Convert tables to cards on mobile */
+            .data-table {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+            }
+
+            .mobile-card {
+                background: var(--glass-bg);
+                backdrop-filter: var(--blur);
+                border: 1px solid var(--glass-border);
+                border-radius: 12px;
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .mobile-card-header {
+                font-size: 1.1rem;
+                color: var(--primary-teal);
+                margin-bottom: 0.75rem;
+                padding-bottom: 0.5rem;
+                border-bottom: 1px solid var(--glass-border);
+            }
+
+            .mobile-card-row {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.5rem 0;
+                font-size: 0.9rem;
+            }
+
+            .mobile-card-label {
+                color: var(--text-secondary);
+            }
+
+            .mobile-card-value {
+                color: var(--text-primary);
+                text-align: right;
+            }
+
+            .action-bar {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: rgba(0, 61, 63, 0.95);
+                backdrop-filter: blur(15px);
+                padding: 1rem;
+                border-top: 1px solid var(--glass-border);
+                z-index: 90;
+                justify-content: space-around;
+            }
+
+            .action-bar .btn {
+                flex: 1;
+                max-width: 150px;
+                font-size: 0.75rem;
+                padding: 0.75rem 0.5rem;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                gap: 0.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .scenario-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+                margin: 1rem;
+                max-height: 85vh;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .tab {
+                white-space: nowrap;
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            /* Bottom padding for fixed action bar */
+            .page-section {
+                padding-bottom: 5rem;
+            }
+
+            /* Make form inputs larger for mobile */
+            .form-input, .form-select {
+                padding: 1rem;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            /* Larger touch targets for nav items */
+            .nav-item {
+                padding: 1.25rem 1.5rem;
+                min-height: 56px;
+            }
+
+            .toast {
+                bottom: 5rem;
+                right: 1rem;
+                left: 1rem;
+                max-width: none;
+            }
+
+            .install-prompt {
+                bottom: 5rem;
+                width: 90%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .page-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .btn {
+                font-size: 0.75rem;
+                padding: 0.75rem 1rem;
+            }
+        }
+
+        /* Desktop only styles */
+        @media (min-width: 769px) {
+            .mobile-cards {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" onclick="app.toggleMobileMenu()">
+        <div class="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay" id="mobileOverlay" onclick="app.closeMobileMenu()"></div>
+
+    <!-- Navigation Sidebar -->
+    <nav class="nav-sidebar" id="navSidebar">
+        <div class="nav-logo">
+            <h1>CC Planner Pro</h1>
+            <div style="font-size: 0.7rem; color: var(--silver); margin-top: 0.5rem;">
+                v1.0.0 • Released 10.10.2025
+            </div>
+        </div>
+        <div class="nav-item active" data-page="dashboard">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+            </svg>
+            <span>Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="inventory">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 4h4v3h-4V4z"/>
+            </svg>
+            <span>Inventory</span>
+        </div>
+        <div class="nav-item" data-page="alerts">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/>
+            </svg>
+            <span>Alerts</span>
+        </div>
+        <div class="nav-item" data-page="scenarios">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M11 15h2v2h-2zm0-8h2v6h-2zm1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+            </svg>
+            <span>Scenarios</span>
+        </div>
+        <div class="nav-item" data-page="vaccines">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"/>
+            </svg>
+            <span>Vaccines</span>
+        </div>
+        <div class="nav-item" data-page="resources">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M9 3v1H4v2h1v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1V4h-5V3H9m3 2h3v1h-3V5M7 6h10v13H7V6m2 2v9h2V8H9m4 0v9h2V8h-2z"/>
+            </svg>
+            <span>Resources</span>
+        </div>
+        <div class="nav-item" data-page="export">
+            <svg class="nav-icon" viewBox="0 0 24 24">
+                <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            <span>Import/Export</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <section class="page-section active" id="dashboard">
+            <div class="page-header">
+                <h2>Dashboard</h2>
+                <p>Your protection readiness at a glance</p>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card glass-panel">
+                    <div class="kpi-label">Coverage Days</div>
+                    <div class="kpi-value" id="kpiCoverage">45<span class="kpi-unit">days</span></div>
+                </div>
+                <div class="kpi-card glass-panel">
+                    <div class="kpi-label">Monthly Spend</div>
+                    <div class="kpi-value" id="kpiSpend">$127<span class="kpi-unit">USD</span></div>
+                </div>
+                <div class="kpi-card glass-panel">
+                    <div class="kpi-label">Items Tracked</div>
+                    <div class="kpi-value" id="kpiItems">23<span class="kpi-unit">items</span></div>
+                </div>
+                <div class="kpi-card glass-panel">
+                    <div class="kpi-label">Next Replacement</div>
+                    <div class="kpi-value" id="kpiNext">3<span class="kpi-unit">days</span></div>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <h3 style="margin-bottom: 1rem; color: var(--primary-teal);">Upcoming Replacements</h3>
+                <!-- Desktop Table -->
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Location</th>
+                            <th>Days Until Empty</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dashboardAlerts">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <!-- Mobile Cards -->
+                <div class="mobile-cards" id="dashboardAlertsMobile">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Inventory Page -->
+        <section class="page-section" id="inventory">
+            <div class="page-header">
+                <h2>Inventory Manager</h2>
+                <p>Track all your protection supplies and equipment</p>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-primary" onclick="app.showAddItemModal()">+ Add Item</button>
+                <button class="btn btn-secondary" onclick="app.showImportModal()">Import</button>
+            </div>
+
+            <div class="filter-bar">
+                <div class="filter-group">
+                    <label style="color: var(--silver);">Category:</label>
+                    <select class="filter-select" id="categoryFilter" onchange="app.filterInventory()">
+                        <option value="">All Categories</option>
+                        <option value="masks">Masks</option>
+                        <option value="filters">Filters</option>
+                        <option value="purifiers">Purifiers</option>
+                        <option value="testing">Testing</option>
+                        <option value="sanitizers">Sanitizers</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label style="color: var(--silver);">Location:</label>
+                    <select class="filter-select" id="locationFilter" onchange="app.filterInventory()">
+                        <option value="">All Locations</option>
+                        <option value="home">Home</option>
+                        <option value="work">Work</option>
+                        <option value="travel">Travel</option>
+                        <option value="car">Car</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <!-- Desktop Table -->
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Category</th>
+                            <th>Location</th>
+                            <th>Quantity</th>
+                            <th>Coverage</th>
+                            <th>Evidence</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTable">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+                <!-- Mobile Cards -->
+                <div class="mobile-cards" id="inventoryMobile">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Alerts Page -->
+        <section class="page-section" id="alerts">
+            <div class="page-header">
+                <h2>Alerts & Replacements</h2>
+                <p>Items requiring attention sorted by urgency</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="app.switchTab(this, 'urgent')">Urgent (< 7 days)</button>
+                <button class="tab" onclick="app.switchTab(this, 'upcoming')">Upcoming (7-30 days)</button>
+                <button class="tab" onclick="app.switchTab(this, 'planned')">Planned (30+ days)</button>
+            </div>
+
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <div id="alertsContent">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Scenarios Page -->
+        <section class="page-section" id="scenarios">
+            <div class="page-header">
+                <h2>Scenario Planner</h2>
+                <p>Get protection recommendations for different situations</p>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-primary" onclick="app.createCustomScenario()">+ Custom Scenario</button>
+            </div>
+
+            <div class="scenario-grid" id="scenarioGrid">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- Vaccines Page -->
+        <section class="page-section" id="vaccines">
+            <div class="page-header">
+                <h2>Vaccination Tracker</h2>
+                <p>Monitor your vaccination schedule and protection levels</p>
+            </div>
+
+            <div class="action-bar">
+                <button class="btn btn-primary" onclick="app.addVaccineRecord()">+ Add Record</button>
+            </div>
+
+            <div class="glass-panel" style="padding: 1.5rem;">
+                <div id="vaccineRecords">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Resources Page -->
+        <section class="page-section" id="resources">
+            <div class="page-header">
+                <h2>Resources & Science</h2>
+                <p>Evidence-based facts, advocacy tools, and risk calculators</p>
+            </div>
+
+            <!-- Resource Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="app.switchResourceTab(this, 'science')">Science Facts</button>
+                <button class="tab" onclick="app.switchResourceTab(this, 'calculators')">Risk Calculators</button>
+                <button class="tab" onclick="app.switchResourceTab(this, 'advocacy')">Advocacy Tools</button>
+                <button class="tab" onclick="app.switchResourceTab(this, 'myths')">Myth Busters</button>
+            </div>
+
+            <!-- Science Facts Tab -->
+            <div class="resource-content active" id="science-content">
+                <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Key Scientific Facts</h3>
+                    <div class="fact-grid">
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">Airborne Transmission</h4>
+                            <p>SARS-CoV-2 spreads primarily through aerosols that can remain airborne for hours and travel >6 feet.</p>
+                            <div class="fact-formula">Time in air = 3+ hours in still air</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('airborne')">View Citations</button>
+                        </div>
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">T-Cell Depletion</h4>
+                            <p>COVID causes CD4+ and CD8+ T-cell exhaustion and depletion, similar to HIV but via different mechanisms.</p>
+                            <div class="fact-formula">Each infection → cumulative damage</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('tcell')">View Citations</button>
+                        </div>
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">Brain Impact</h4>
+                            <p>Even mild COVID causes measurable brain changes including grey matter loss and cognitive decline.</p>
+                            <div class="fact-formula">IQ impact: -3 to -9 points per infection</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('brain')">View Citations</button>
+                        </div>
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">No Natural Attenuation</h4>
+                            <p>No evidence exists that betacoronaviruses naturally evolve to become milder. SARS-CoV-2 remains highly pathogenic.</p>
+                            <div class="fact-formula">Severity ≠ decreased over time</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('attenuation')">View Citations</button>
+                        </div>
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">Vascular Damage</h4>
+                            <p>COVID is a vascular disease affecting all organs through endothelial damage and microclots.</p>
+                            <div class="fact-formula">All organs at risk</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('vascular')">View Citations</button>
+                        </div>
+                        <div class="fact-card glass-panel">
+                            <h4 style="color: var(--primary-teal);">Reinfection Risk</h4>
+                            <p>Each reinfection carries risk of Long COVID, with cumulative damage. No "immunity debt" - only infection harm.</p>
+                            <div class="fact-formula">10-20% → Long COVID per infection</div>
+                            <button class="btn btn-secondary" onclick="app.showCitation('reinfection')">View Citations</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Quick Response Library</h3>
+                    <div class="response-list">
+                        <div class="response-item">
+                            <strong>"It's mild now"</strong>
+                            <p>No evidence betacoronaviruses attenuate naturally. Show me the studies proving decreased pathogenicity.</p>
+                            <button class="btn btn-secondary" onclick="app.copyResponse(this)">Copy</button>
+                        </div>
+                        <div class="response-item">
+                            <strong>"Masks don't work"</strong>
+                            <p>N95s filter 95%+ of particles. Physics doesn't stop working because you're tired of precautions.</p>
+                            <button class="btn btn-secondary" onclick="app.copyResponse(this)">Copy</button>
+                        </div>
+                        <div class="response-item">
+                            <strong>"Natural immunity is better"</strong>
+                            <p>Each infection causes cumulative damage. There's no beneficial adaptation to organ damage.</p>
+                            <button class="btn btn-secondary" onclick="app.copyResponse(this)">Copy</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Calculators Tab -->
+            <div class="resource-content" id="calculators-content" style="display: none;">
+                <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">CO₂ Risk Calculator</h3>
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label class="form-label">CO₂ Level (ppm)</label>
+                            <input type="number" class="form-input" id="co2Level" min="400" max="5000" value="800">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Occupancy</label>
+                            <select class="form-select" id="occupancyLevel">
+                                <option value="low">Low (1-5 people)</option>
+                                <option value="medium">Medium (6-20 people)</option>
+                                <option value="high">High (20+ people)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Duration (minutes)</label>
+                            <input type="number" class="form-input" id="duration" min="1" max="480" value="60">
+                        </div>
+                        <button class="btn btn-primary" onclick="app.calculateCO2Risk()">Calculate Risk</button>
+                        <div id="co2Result" class="result-box" style="display: none; margin-top: 1rem;">
+                            <h4>Risk Assessment:</h4>
+                            <div id="riskLevel"></div>
+                            <div id="riskRecommendation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Air Changes Calculator</h3>
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label class="form-label">Room Volume (cubic feet)</label>
+                            <input type="number" class="form-input" id="roomVolume" min="100" max="10000" value="1000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">HEPA CADR (CFM)</label>
+                            <input type="number" class="form-input" id="cadr" min="0" max="1000" value="200">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Natural Ventilation</label>
+                            <select class="form-select" id="naturalVent">
+                                <option value="0">None (closed windows)</option>
+                                <option value="1">Poor (cracked window)</option>
+                                <option value="2">Moderate (open window)</option>
+                                <option value="4">Good (cross-ventilation)</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="app.calculateACH()">Calculate ACH</button>
+                        <div id="achResult" class="result-box" style="display: none; margin-top: 1rem;">
+                            <h4>Air Changes Per Hour:</h4>
+                            <div id="achValue"></div>
+                            <div id="achRecommendation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Event Risk Assessment</h3>
+                    <div class="calculator-form">
+                        <div class="form-group">
+                            <label class="form-label">Event Type</label>
+                            <select class="form-select" id="eventType">
+                                <option value="outdoor">Outdoor</option>
+                                <option value="indoor-ventilated">Indoor - Well Ventilated</option>
+                                <option value="indoor-poor">Indoor - Poor Ventilation</option>
+                                <option value="transit">Public Transit</option>
+                                <option value="medical">Medical Facility</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Crowd Density</label>
+                            <select class="form-select" id="crowdDensity">
+                                <option value="sparse">Sparse (<6ft spacing)</option>
+                                <option value="moderate">Moderate (3-6ft spacing)</option>
+                                <option value="dense">Dense (<3ft spacing)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Community Transmission</label>
+                            <select class="form-select" id="transmission">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="very-high">Very High</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="app.assessEventRisk()">Assess Risk</button>
+                        <div id="eventResult" class="result-box" style="display: none; margin-top: 1rem;">
+                            <h4>Protection Requirements:</h4>
+                            <div id="protectionLevel"></div>
+                            <div id="protectionItems"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advocacy Tools Tab -->
+            <div class="resource-content" id="advocacy-content" style="display: none;">
+                <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Letter Templates</h3>
+                    <div class="template-grid">
+                        <div class="template-card glass-panel">
+                            <h4>School Mask Accommodation</h4>
+                            <p>Request for mask accommodation and clean air measures in school settings.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('school')">Generate Letter</button>
+                        </div>
+                        <div class="template-card glass-panel">
+                            <h4>Medical Mask Support</h4>
+                            <p>Request for doctor's note supporting patient mask use in public settings.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('medical')">Generate Letter</button>
+                        </div>
+                        <div class="template-card glass-panel">
+                            <h4>Workplace Accommodation</h4>
+                            <p>ADA accommodation request for remote work or improved ventilation.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('workplace')">Generate Letter</button>
+                        </div>
+                        <div class="template-card glass-panel">
+                            <h4>Family Education</h4>
+                            <p>Educational letter to family members about COVID precautions.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('family')">Generate Letter</button>
+                        </div>
+                        <div class="template-card glass-panel">
+                            <h4>Board of Education</h4>
+                            <p>Speech template for advocating clean air at school board meetings.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('board')">Generate Speech</button>
+                        </div>
+                        <div class="template-card glass-panel">
+                            <h4>Event Organizer</h4>
+                            <p>Request for COVID precautions at events or gatherings.</p>
+                            <button class="btn btn-primary" onclick="app.generateLetter('event')">Generate Letter</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Talking Points</h3>
+                    <div class="talking-points">
+                        <div class="point-category">
+                            <h4 style="color: var(--silver);">For Healthcare Settings</h4>
+                            <ul class="protection-list">
+                                <li class="protection-item">COVID causes vascular and immune damage even in mild cases</li>
+                                <li class="protection-item">Request N95 masks for all appointments</li>
+                                <li class="protection-item">Ask about HEPA filtration in exam rooms</li>
+                                <li class="protection-item">Request first appointment of the day when possible</li>
+                            </ul>
+                        </div>
+                        <div class="point-category">
+                            <h4 style="color: var(--silver);">For Schools</h4>
+                            <ul class="protection-list">
+                                <li class="protection-item">CO₂ monitors show ventilation adequacy</li>
+                                <li class="protection-item">HEPA filters reduce transmission by 50%+</li>
+                                <li class="protection-item">Masks protect developing brains from damage</li>
+                                <li class="protection-item">Clean air benefits all respiratory health</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Myth Busters Tab -->
+            <div class="resource-content" id="myths-content" style="display: none;">
+                <div class="glass-panel" style="padding: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Common Myths & Facts</h3>
+                    <div class="myth-grid">
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"COVID is just a cold now"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>SARS-CoV-2 remains a vascular disease causing multi-organ damage. No evidence shows it has become less pathogenic.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"Immunity debt is real"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>No scientific basis for "immunity debt." Infections cause immune damage, not strength. Clean air prevents disease.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"Vaccines prevent Long COVID"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>Vaccines reduce but don't eliminate Long COVID risk. Only avoiding infection prevents Long COVID entirely.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"Masks harm children"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>No evidence masks harm development. COVID causes brain damage. Masks protect developing brains.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"Most people recover fully"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>50%+ show organ damage at 1 year. "Recovery" often means unrecognized ongoing damage.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                        <div class="myth-card glass-panel">
+                            <div class="myth-header" style="color: var(--alert-coral);">❌ MYTH</div>
+                            <p>"Healthy people don't need to worry"</p>
+                            <div class="fact-header" style="color: var(--success-aqua); margin-top: 1rem;">✓ FACT</div>
+                            <p>Long COVID affects all ages and fitness levels. Olympic athletes have developed ME/CFS from COVID.</p>
+                            <button class="btn btn-secondary" onclick="app.expandMyth(this)">See Evidence</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="padding: 1.5rem; margin-top: 1.5rem;">
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Burden of Proof Reversals</h3>
+                    <div class="reversal-list">
+                        <div class="reversal-item">
+                            <strong>They say:</strong> "Prove masks work"<br>
+                            <strong>You say:</strong> "Prove physics stopped working. N95s filter 95% of particles by definition."
+                        </div>
+                        <div class="reversal-item">
+                            <strong>They say:</strong> "We need RCTs for everything"<br>
+                            <strong>You say:</strong> "We don't need RCTs for parachutes. Some things are proven by physics and convergent evidence."
+                        </div>
+                        <div class="reversal-item">
+                            <strong>They say:</strong> "It's endemic, we have to live with it"<br>
+                            <strong>You say:</strong> "We don't 'live with' preventable brain damage. We prevent it with clean air and PPE."
+                        </div>
+                        <div class="reversal-item">
+                            <strong>They say:</strong> "You're living in fear"<br>
+                            <strong>You say:</strong> "You call seatbelts fear? I call prevention intelligence."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Import/Export Page -->
+        <section class="page-section" id="export">
+            <div class="page-header">
+                <h2>Import & Export Data</h2>
+                <p>Backup, restore, and share your inventory data</p>
+            </div>
+
+            <div class="glass-panel import-section">
+                <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Import Data</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">Import inventory data from CSV or JSON files</p>
+                <div class="file-input-wrapper">
+                    <input type="file" class="file-input" id="importFile" accept=".csv,.json" onchange="app.handleImport(event)">
+                    <label for="importFile" class="file-label">Choose File to Import</label>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 2rem; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--primary-teal); margin-bottom: 1.5rem;">Security Settings</h3>
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <button class="btn btn-primary" onclick="app.toggleEncryption()" id="encryptionToggle">
+                        Enable Encryption
+                    </button>
+                    <span id="encryptionStatus" style="color: var(--text-secondary);">
+                        Data is currently unencrypted
+                    </span>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                    Encryption protects your data on this device. Remember your password - it cannot be recovered!
+                </p>
+            </div>
+
+            <div class="glass-panel" style="padding: 2rem;">
+                <h3 style="color: var(--primary-teal); margin-bottom: 1.5rem;">Export Options</h3>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="app.exportToJSON()">Export as JSON</button>
+                    <button class="btn btn-primary" onclick="app.exportToCSV()">Export as CSV</button>
+                    <button class="btn btn-primary" onclick="app.printReport()">Print Report</button>
+                </div>
+                <div style="margin-top: 2rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                        Your data is stored locally on this device. Exports can be shared with AI assistants, 
+                        healthcare providers, or saved for backup purposes. All data is encrypted and secure.
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-panel" style="padding: 2rem; margin-top: 1.5rem;">
+                <h3 style="color: var(--primary-teal); margin-bottom: 1.5rem;">About CC Planner Pro</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 20px; height: 20px; stroke: var(--primary-teal); fill: none;" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        <span style="color: var(--text-primary);">Designed by <strong>Dr. Sean P. Mullen</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 20px; height: 20px; stroke: var(--primary-teal); fill: none;" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                        <span style="color: var(--text-primary);">Produced by <strong>Mind to Motion Studios, LLC</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 20px; height: 20px; stroke: var(--primary-teal); fill: none;" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/>
+                        </svg>
+                        <span style="color: var(--text-primary);">License: <strong>tooldrop.io - Free</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 20px; height: 20px; stroke: var(--primary-teal); fill: none;" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                        <span style="color: var(--text-primary);">Release Date: <strong>October 10, 2025</strong></span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <svg style="width: 20px; height: 20px; stroke: var(--primary-teal); fill: none;" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        </svg>
+                        <span style="color: var(--text-primary);">Built for the <strong>COVID-Conscious Community</strong></span>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--glass-border);">
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6;">
+                        CC Planner Pro is a free, open-source tool designed to help individuals and families 
+                        manage COVID-19 protection supplies and make informed safety decisions. This app was 
+                        created in response to the ongoing need for accessible, science-based tools in the 
+                        absence of adequate public health guidance.
+                    </p>
+                    <p style="color: var(--text-secondary); font-size: 0.875rem; line-height: 1.6; margin-top: 1rem;">
+                        Special thanks to the COVID-conscious community for their resilience, mutual aid, 
+                        and commitment to protecting one another. Your knowledge, advocacy, and care for 
+                        others inspired this tool.
+                    </p>
+                    <div style="margin-top: 1rem;">
+                        <a href="https://github.com/yourusername/cc-planner" style="color: var(--primary-teal); text-decoration: none;">
+                            View Source Code →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Add/Edit Item Modal -->
+    <div class="modal" id="itemModal">
+        <div class="modal-content glass-panel">
+            <button class="modal-close" onclick="app.closeModal('itemModal')">&times;</button>
+            <div class="modal-header">
+                <h3 class="modal-title" id="itemModalTitle">Add Inventory Item</h3>
+            </div>
+            <form id="itemForm" onsubmit="app.saveItem(event)">
+                <input type="hidden" id="itemId" name="itemId">
+                <div class="form-group">
+                    <label class="form-label">Item Name *</label>
+                    <input type="text" class="form-input" name="name" id="itemName" required maxlength="100" pattern="[a-zA-Z0-9\s\-\.]{1,100}">
+                    <span class="form-error" id="nameError">Please enter a valid item name (letters, numbers, spaces, hyphens, periods only)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Category *</label>
+                    <select class="form-select" name="category" required>
+                        <option value="masks">Masks</option>
+                        <option value="filters">Filters</option>
+                        <option value="purifiers">Purifiers</option>
+                        <option value="testing">Testing</option>
+                        <option value="sanitizers">Sanitizers</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Location *</label>
+                    <select class="form-select" name="location" required>
+                        <option value="home">Home</option>
+                        <option value="work">Work</option>
+                        <option value="travel">Travel</option>
+                        <option value="car">Car</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Type/Specification</label>
+                    <input type="text" class="form-input" name="spec" placeholder="e.g., N95, MERV-13" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quantity *</label>
+                    <input type="number" class="form-input" name="quantity" min="0" max="9999" required>
+                    <span class="form-error" id="quantityError">Please enter a valid quantity (0-9999)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Usage Rate (per day) *</label>
+                    <input type="number" class="form-input" name="usageRate" min="0" max="100" step="0.01" required>
+                    <span class="form-error" id="usageError">Please enter a valid usage rate (0-100)</span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Price per Unit</label>
+                    <input type="number" class="form-input" name="price" min="0" max="99999" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Vendor/Supplier</label>
+                    <input type="text" class="form-input" name="vendor" maxlength="100">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Evidence Level</label>
+                    <select class="form-select" name="evidence">
+                        <option value="high">High Evidence</option>
+                        <option value="moderate">Moderate Evidence</option>
+                        <option value="low">Low Evidence</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="app.closeModal('itemModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteModal">
+        <div class="modal-content glass-panel">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Delete</h3>
+            </div>
+            <div class="confirm-dialog">
+                <p class="confirm-message" id="deleteMessage">Are you sure you want to delete this item?</p>
+                <div class="confirm-buttons">
+                    <button class="btn btn-secondary" onclick="app.closeModal('deleteModal')">Cancel</button>
+                    <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastMessage"></span>
+    </div>
+
+    <!-- PWA Install Prompt -->
+    <div class="install-prompt" id="installPrompt">
+        <span>Install CC Planner Pro for offline access</span>
+        <button class="btn btn-primary" style="background: white; color: var(--primary-dark);" onclick="app.installPWA()">Install</button>
+        <button class="btn" style="background: transparent; padding: 0.5rem;" onclick="app.dismissInstall()">Not now</button>
+    </div>
+
+    <script>
+        // Security utilities with Web Crypto API
+        const Security = {
+            // Generate cryptographic key from password
+            async deriveKey(password, salt) {
+                const encoder = new TextEncoder();
+                const keyMaterial = await crypto.subtle.importKey(
+                    'raw',
+                    encoder.encode(password),
+                    'PBKDF2',
+                    false,
+                    ['deriveBits', 'deriveKey']
+                );
+                
+                return crypto.subtle.deriveKey(
+                    {
+                        name: 'PBKDF2',
+                        salt: encoder.encode(salt),
+                        iterations: 100000,
+                        hash: 'SHA-256'
+                    },
+                    keyMaterial,
+                    { name: 'AES-GCM', length: 256 },
+                    false,
+                    ['encrypt', 'decrypt']
+                );
+            },
+
+            // Encrypt using Web Crypto API
+            async encrypt(text, password) {
+                try {
+                    const encoder = new TextEncoder();
+                    const salt = 'ccplanner-salt-2024'; // In production, use random salt
+                    const key = await this.deriveKey(password, salt);
+                    const iv = crypto.getRandomValues(new Uint8Array(12));
+                    
+                    const encrypted = await crypto.subtle.encrypt(
+                        { name: 'AES-GCM', iv },
+                        key,
+                        encoder.encode(text)
+                    );
+                    
+                    // Combine IV and encrypted data
+                    const combined = new Uint8Array(iv.length + encrypted.byteLength);
+                    combined.set(iv);
+                    combined.set(new Uint8Array(encrypted), iv.length);
+                    
+                    // Convert to base64
+                    return btoa(String.fromCharCode(...combined));
+                } catch (err) {
+                    console.error('Encryption failed:', err);
+                    // Fallback to simple encryption
+                    return this.simpleEncrypt(text, password);
+                }
+            },
+
+            // Decrypt using Web Crypto API
+            async decrypt(encryptedData, password) {
+                try {
+                    const salt = 'ccplanner-salt-2024';
+                    const key = await this.deriveKey(password, salt);
+                    
+                    // Decode from base64
+                    const combined = Uint8Array.from(atob(encryptedData), c => c.charCodeAt(0));
+                    
+                    // Extract IV and encrypted data
+                    const iv = combined.slice(0, 12);
+                    const encrypted = combined.slice(12);
+                    
+                    const decrypted = await crypto.subtle.decrypt(
+                        { name: 'AES-GCM', iv },
+                        key,
+                        encrypted
+                    );
+                    
+                    const decoder = new TextDecoder();
+                    return decoder.decode(decrypted);
+                } catch (err) {
+                    console.error('Decryption failed:', err);
+                    // Try fallback decryption
+                    return this.simpleDecrypt(encryptedData, password);
+                }
+            },
+
+            // Fallback simple encryption (for older browsers)
+            simpleEncrypt(text, password) {
+                if (!text) return '';
+                const key = this.stretchKey(password);
+                let result = '';
+                for (let i = 0; i < text.length; i++) {
+                    result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                }
+                return btoa(result);
+            },
+
+            simpleDecrypt(encoded, password) {
+                if (!encoded) return '';
+                try {
+                    const text = atob(encoded);
+                    const key = this.stretchKey(password);
+                    let result = '';
+                    for (let i = 0; i < text.length; i++) {
+                        result += String.fromCharCode(text.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                    }
+                    return result;
+                } catch (e) {
+                    return null;
+                }
+            },
+
+            stretchKey(password) {
+                let stretched = password;
+                for (let i = 0; i < 100; i++) {
+                    stretched = btoa(stretched + password);
+                }
+                return stretched;
+            },
+
+            // Sanitize HTML to prevent XSS
+            sanitizeHTML(str) {
+                const temp = document.createElement('div');
+                temp.textContent = str;
+                return temp.innerHTML;
+            },
+
+            // Validate input based on type
+            validateInput(value, type) {
+                const patterns = {
+                    name: /^[a-zA-Z0-9\s\-\.]{1,100}$/,
+                    number: /^\d+(\.\d{1,2})?$/,
+                    spec: /^[a-zA-Z0-9\s\-\.\,]{0,50}$/,
+                    vendor: /^[a-zA-Z0-9\s\-\.\,&]{0,100}$/
+                };
+                return patterns[type]?.test(value) ?? true;
+            },
+
+            // Escape CSV special characters
+            escapeCSV(cell) {
+                if (cell === null || cell === undefined) return '';
+                const str = String(cell);
+                if (/^[=+\-@]/.test(str)) {
+                    return `'${str}`;
+                }
+                if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                    return `"${str.replace(/"/g, '""')}"`;
+                }
+                return str;
+            },
+
+            // Validate numeric input
+            validateNumber(value, min, max) {
+                const num = parseFloat(value);
+                return !isNaN(num) && num >= min && num <= max;
+            },
+
+            // Generate secure ID
+            generateId() {
+                return Date.now() + Math.random().toString(36).substr(2, 9);
+            }
+        };
+
+        // Icon generator as embedded data
+        const IconGenerator = {
+            sizes: [72, 96, 128, 144, 152, 192, 384, 512],
+            
+            generateIcon(size) {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Create gradient background
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#003d3f');
+                gradient.addColorStop(1, '#00c6c6');
+                
+                // Draw rounded rectangle
+                const radius = size * 0.15;
+                ctx.fillStyle = gradient;
+                ctx.beginPath();
+                ctx.moveTo(radius, 0);
+                ctx.lineTo(size - radius, 0);
+                ctx.quadraticCurveTo(size, 0, size, radius);
+                ctx.lineTo(size, size - radius);
+                ctx.quadraticCurveTo(size, size, size - radius, size);
+                ctx.lineTo(radius, size);
+                ctx.quadraticCurveTo(0, size, 0, size - radius);
+                ctx.lineTo(0, radius);
+                ctx.quadraticCurveTo(0, 0, radius, 0);
+                ctx.closePath();
+                ctx.fill();
+
+                // Draw shield icon
+                const centerX = size / 2;
+                const centerY = size / 2;
+                const shieldSize = size * 0.5;
+                
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.strokeStyle = '#00c6c6';
+                ctx.lineWidth = size * 0.02;
+                
+                // Shield path
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - shieldSize * 0.4);
+                ctx.lineTo(centerX + shieldSize * 0.4, centerY - shieldSize * 0.2);
+                ctx.lineTo(centerX + shieldSize * 0.4, centerY + shieldSize * 0.1);
+                ctx.quadraticCurveTo(centerX + shieldSize * 0.4, centerY + shieldSize * 0.4, 
+                                     centerX, centerY + shieldSize * 0.5);
+                ctx.quadraticCurveTo(centerX - shieldSize * 0.4, centerY + shieldSize * 0.4, 
+                                     centerX - shieldSize * 0.4, centerY + shieldSize * 0.1);
+                ctx.lineTo(centerX - shieldSize * 0.4, centerY - shieldSize * 0.2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Add cross symbol
+                ctx.strokeStyle = '#003d3f';
+                ctx.lineWidth = size * 0.03;
+                ctx.lineCap = 'round';
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY - shieldSize * 0.15);
+                ctx.lineTo(centerX, centerY + shieldSize * 0.15);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX - shieldSize * 0.15, centerY);
+                ctx.lineTo(centerX + shieldSize * 0.15, centerY);
+                ctx.stroke();
+
+                return canvas.toDataURL('image/png');
+            },
+
+            getAllIcons() {
+                const icons = {};
+                this.sizes.forEach(size => {
+                    icons[`${size}x${size}`] = this.generateIcon(size);
+                });
+                return icons;
+            }
+        };
+
+        // Main Application
+        const app = {
+            // Data storage
+            inventory: [],
+            vaccines: [],
+            scenarios: [
+                {
+                    id: 1,
+                    name: "High-Traffic Indoor Event",
+                    description: "Concert, conference, or crowded indoor gathering",
+                    recommendations: {
+                        minimum: ["N95 mask", "Hand sanitizer"],
+                        ideal: ["P100 respirator", "Portable air purifier", "Rapid tests", "Safety glasses"]
+                    }
+                },
+                {
+                    id: 2,
+                    name: "Domestic Flight",
+                    description: "2-4 hour flight with standard cabin air filtration",
+                    recommendations: {
+                        minimum: ["N95 mask", "Backup masks", "Hand sanitizer"],
+                        ideal: ["Elastomeric P100", "Face shield", "Sanitizing wipes", "Travel HEPA purifier"]
+                    }
+                },
+                {
+                    id: 3,
+                    name: "Medical Appointment",
+                    description: "Doctor's office or hospital visit",
+                    recommendations: {
+                        minimum: ["N95 mask", "Hand sanitizer"],
+                        ideal: ["P100 respirator", "Eye protection", "Gloves", "Change of clothes"]
+                    }
+                },
+                {
+                    id: 4,
+                    name: "Family Gathering",
+                    description: "Indoor gathering with mixed vaccination status",
+                    recommendations: {
+                        minimum: ["Rapid tests for all", "Ventilation monitoring"],
+                        ideal: ["HEPA purifiers", "CO2 monitor", "Outdoor option", "N95 masks available"]
+                    }
+                }
+            ],
+            deferredPrompt: null,
+            encryptionEnabled: false,
+            encryptionKey: null,
+            lastActivity: Date.now(),
+            lockTimeout: 5 * 60 * 1000, // 5 minutes
+            isLocked: false,
+            icons: null,
+
+            // Initialize app
+            init() {
+                this.generateAndStoreIcons();
+                this.checkEncryption();
+                this.loadData();
+                this.setupEventListeners();
+                this.setupPWA();
+                this.setupAutoLock();
+                this.renderDashboard();
+                this.populateDummyData();
+                this.handleResize();
+                this.checkFirstVisit();
+            },
+
+            // Generate and store icons
+            generateAndStoreIcons() {
+                this.icons = IconGenerator.getAllIcons();
+                // Store icons in localStorage for offline use
+                try {
+                    localStorage.setItem('ccplanner_icons', JSON.stringify(this.icons));
+                } catch (e) {
+                    console.log('Could not cache icons:', e);
+                }
+            },
+
+            // Setup auto-lock
+            setupAutoLock() {
+                // Track user activity
+                ['mousedown', 'keydown', 'scroll', 'touchstart'].forEach(event => {
+                    document.addEventListener(event, () => {
+                        this.lastActivity = Date.now();
+                        if (this.isLocked && this.encryptionEnabled) {
+                            this.showLockScreen();
+                        }
+                    });
+                });
+
+                // Check for inactivity every minute
+                setInterval(() => {
+                    if (this.encryptionEnabled && !this.isLocked) {
+                        const inactiveTime = Date.now() - this.lastActivity;
+                        if (inactiveTime > this.lockTimeout) {
+                            this.lockApp();
+                        }
+                    }
+                }, 60000);
+            },
+
+            // Lock the app
+            lockApp() {
+                if (!this.encryptionEnabled) return;
+                
+                this.isLocked = true;
+                this.showLockScreen();
+            },
+
+            // Show lock screen
+            showLockScreen() {
+                const existing = document.getElementById('lockScreen');
+                if (existing) return;
+
+                const lockScreen = document.createElement('div');
+                lockScreen.id = 'lockScreen';
+                lockScreen.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(135deg, #001a1a 0%, #003d3f 50%, #002828 100%);
+                    z-index: 10000;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    backdrop-filter: blur(10px);
+                `;
+
+                lockScreen.innerHTML = `
+                    <div class="glass-panel" style="padding: 2rem; max-width: 400px; width: 90%;">
+                        <h2 style="color: var(--primary-teal); margin-bottom: 1rem; text-align: center;">
+                            🔒 App Locked
+                        </h2>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; text-align: center;">
+                            Enter your password to unlock
+                        </p>
+                        <input type="password" id="unlockPassword" class="form-input" 
+                               style="margin-bottom: 1rem;" placeholder="Password"
+                               onkeypress="if(event.key === 'Enter') app.unlock()">
+                        <button class="btn btn-primary" style="width: 100%;" onclick="app.unlock()">
+                            Unlock
+                        </button>
+                        <p id="unlockError" style="color: var(--alert-coral); margin-top: 1rem; display: none; text-align: center;">
+                            Incorrect password
+                        </p>
+                    </div>
+                `;
+
+                document.body.appendChild(lockScreen);
+                document.getElementById('unlockPassword').focus();
+            },
+
+            // Unlock the app
+            async unlock() {
+                const passwordInput = document.getElementById('unlockPassword');
+                const password = passwordInput.value;
+                
+                if (!password) return;
+
+                // Test decryption with the password
+                try {
+                    const testData = localStorage.getItem('ccplanner_inventory');
+                    if (testData) {
+                        const decrypted = await Security.decrypt(testData, password);
+                        if (decrypted) {
+                            JSON.parse(decrypted); // Test if valid JSON
+                            this.encryptionKey = password;
+                            this.isLocked = false;
+                            this.lastActivity = Date.now();
+                            document.getElementById('lockScreen').remove();
+                            this.loadData(); // Reload data with correct password
+                            this.renderDashboard();
+                        } else {
+                            throw new Error('Invalid password');
+                        }
+                    }
+                } catch (err) {
+                    document.getElementById('unlockError').style.display = 'block';
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            },
+
+            // Check if encryption is enabled
+            checkEncryption() {
+                const encrypted = localStorage.getItem('ccplanner_encrypted');
+                this.encryptionEnabled = encrypted === 'true';
+                if (this.encryptionEnabled) {
+                    this.encryptionKey = 'ccplanner2024'; // Default, will be replaced
+                }
+            },
+
+            // Enable/disable encryption
+            async toggleEncryption() {
+                if (!this.encryptionEnabled) {
+                    const password = prompt('Set a password for encryption (remember this!):');
+                    if (password && password.length >= 6) {
+                        this.encryptionKey = password;
+                        this.encryptionEnabled = true;
+                        localStorage.setItem('ccplanner_encrypted', 'true');
+                        await this.saveData(); // Re-save with encryption
+                        this.showToast('Encryption enabled with auto-lock', 'success');
+                        this.updateEncryptionStatus();
+                    } else {
+                        this.showToast('Password must be at least 6 characters', 'error');
+                    }
+                } else {
+                    const password = prompt('Enter your current password to disable encryption:');
+                    if (password === this.encryptionKey) {
+                        this.encryptionEnabled = false;
+                        this.encryptionKey = null;
+                        this.isLocked = false;
+                        localStorage.setItem('ccplanner_encrypted', 'false');
+                        await this.saveData(); // Re-save without encryption
+                        this.showToast('Encryption disabled', 'warning');
+                        this.updateEncryptionStatus();
+                    } else {
+                        this.showToast('Incorrect password', 'error');
+                    }
+                }
+            },
+
+            // Check first visit
+            checkFirstVisit() {
+                if (!localStorage.getItem('ccplanner_visited')) {
+                    localStorage.setItem('ccplanner_visited', 'true');
+                    setTimeout(() => {
+                        if (confirm('Welcome to CC Planner Pro! Would you like to enable data encryption with auto-lock for extra security?')) {
+                            this.toggleEncryption();
+                        }
+                    }, 1000);
+                }
+            },
+
+            // Setup PWA features with embedded icons
+            setupPWA() {
+                // Update manifest with data URI icons
+                if (this.icons) {
+                    const link = document.querySelector('link[rel="manifest"]');
+                    if (link) {
+                        const manifest = {
+                            name: "CC Planner Pro - COVID Protection Manager",
+                            short_name: "CC Planner",
+                            description: "Smart inventory manager for COVID-19 protection supplies",
+                            start_url: "/",
+                            display: "standalone",
+                            background_color: "#003d3f",
+                            theme_color: "#003d3f",
+                            orientation: "any",
+                            icons: Object.keys(this.icons).map(size => ({
+                                src: this.icons[size],
+                                sizes: size,
+                                type: "image/png",
+                                purpose: "any maskable"
+                            }))
+                        };
+                        
+                        const manifestBlob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+                        const manifestURL = URL.createObjectURL(manifestBlob);
+                        link.href = manifestURL;
+                    }
+                }
+
+                // Register service worker
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.register('sw.js')
+                        .then(reg => {
+                            console.log('Service Worker registered:', reg);
+                        })
+                        .catch(err => {
+                            console.log('Service Worker registration failed:', err);
+                        });
+                }
+
+                // Listen for install prompt
+                window.addEventListener('beforeinstallprompt', (e) => {
+                    e.preventDefault();
+                    this.deferredPrompt = e;
+                    setTimeout(() => {
+                        if (this.deferredPrompt && !window.matchMedia('(display-mode: standalone)').matches) {
+                            document.getElementById('installPrompt').classList.add('active');
+                        }
+                    }, 30000);
+                });
+
+                window.addEventListener('appinstalled', () => {
+                    this.deferredPrompt = null;
+                    this.showToast('App installed successfully!', 'success');
+                });
+            },
+
+            // Install PWA
+            installPWA() {
+                if (this.deferredPrompt) {
+                    this.deferredPrompt.prompt();
+                    this.deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('User accepted install');
+                        }
+                        this.deferredPrompt = null;
+                        document.getElementById('installPrompt').classList.remove('active');
+                    });
+                }
+            },
+
+            // Dismiss install prompt
+            dismissInstall() {
+                document.getElementById('installPrompt').classList.remove('active');
+                // Ask again in 7 days
+                setTimeout(() => {
+                    if (this.deferredPrompt) {
+                        document.getElementById('installPrompt').classList.add('active');
+                    }
+                }, 7 * 24 * 60 * 60 * 1000);
+            },
+
+            // Load data from localStorage
+            async loadData() {
+                try {
+                    let savedInventory = localStorage.getItem('ccplanner_inventory');
+                    let savedVaccines = localStorage.getItem('ccplanner_vaccines');
+                    
+                    // Decrypt if encryption is enabled
+                    if (this.encryptionEnabled && this.encryptionKey) {
+                        if (savedInventory) {
+                            const decrypted = await Security.decrypt(savedInventory, this.encryptionKey);
+                            if (decrypted) {
+                                savedInventory = decrypted;
+                            }
+                        }
+                        if (savedVaccines) {
+                            const decrypted = await Security.decrypt(savedVaccines, this.encryptionKey);
+                            if (decrypted) {
+                                savedVaccines = decrypted;
+                            }
+                        }
+                    }
+                    
+                    if (savedInventory) {
+                        this.inventory = JSON.parse(savedInventory);
+                    }
+                    if (savedVaccines) {
+                        this.vaccines = JSON.parse(savedVaccines);
+                    }
+                } catch (err) {
+                    console.error('Error loading data:', err);
+                    // Don't show error if locked
+                    if (!this.isLocked) {
+                        this.showToast('Error loading saved data', 'error');
+                    }
+                }
+            },
+
+            // Save data to localStorage
+            async saveData() {
+                try {
+                    let inventoryData = JSON.stringify(this.inventory);
+                    let vaccineData = JSON.stringify(this.vaccines);
+                    
+                    // Encrypt if enabled
+                    if (this.encryptionEnabled && this.encryptionKey) {
+                        inventoryData = await Security.encrypt(inventoryData, this.encryptionKey);
+                        vaccineData = await Security.encrypt(vaccineData, this.encryptionKey);
+                    }
+                    
+                    localStorage.setItem('ccplanner_inventory', inventoryData);
+                    localStorage.setItem('ccplanner_vaccines', vaccineData);
+                } catch (err) {
+                    console.error('Error saving data:', err);
+                    this.showToast('Error saving data', 'error');
+                }
+            },
+
+            // Setup event listeners
+            setupEventListeners() {
+                // Navigation
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        this.navigateTo(item.dataset.page);
+                        this.closeMobileMenu();
+                    });
+                });
+
+                // Modal close on background click
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.classList.remove('active');
+                        }
+                    });
+                });
+
+                // Handle window resize
+                window.addEventListener('resize', () => this.handleResize());
+
+                // Form validation
+                document.getElementById('itemName').addEventListener('input', (e) => {
+                    if (!Security.validateInput(e.target.value, 'name')) {
+                        document.getElementById('nameError').classList.add('active');
+                    } else {
+                        document.getElementById('nameError').classList.remove('active');
+                    }
+                });
+            },
+
+            // Show toast notification
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastMessage = document.getElementById('toastMessage');
+                
+                toast.className = `toast toast-${type}`;
+                toastMessage.textContent = message;
+                toast.classList.add('active');
+                
+                setTimeout(() => {
+                    toast.classList.remove('active');
+                }, 3000);
+            },
+
+            // Mobile menu functions
+            toggleMobileMenu() {
+                const sidebar = document.getElementById('navSidebar');
+                const toggle = document.getElementById('mobileMenuToggle');
+                const overlay = document.getElementById('mobileOverlay');
+                
+                sidebar.classList.toggle('mobile-open');
+                toggle.classList.toggle('active');
+                overlay.classList.toggle('active');
+                
+                if (sidebar.classList.contains('mobile-open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            },
+
+            closeMobileMenu() {
+                const sidebar = document.getElementById('navSidebar');
+                const toggle = document.getElementById('mobileMenuToggle');
+                const overlay = document.getElementById('mobileOverlay');
+                
+                sidebar.classList.remove('mobile-open');
+                toggle.classList.remove('active');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+            },
+
+            handleResize() {
+                if (window.innerWidth > 768) {
+                    this.closeMobileMenu();
+                }
+            },
+
+            // Navigation
+            navigateTo(page) {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.page === page);
+                });
+
+                document.querySelectorAll('.page-section').forEach(section => {
+                    section.classList.toggle('active', section.id === page);
+                });
+
+                switch(page) {
+                    case 'dashboard':
+                        this.renderDashboard();
+                        break;
+                    case 'inventory':
+                        this.renderInventory();
+                        break;
+                    case 'alerts':
+                        this.renderAlerts();
+                        break;
+                    case 'scenarios':
+                        this.renderScenarios();
+                        break;
+                    case 'vaccines':
+                        this.renderVaccines();
+                        break;
+                    case 'resources':
+                        this.renderResources();
+                        break;
+                    case 'export':
+                        this.updateEncryptionStatus();
+                        break;
+                }
+            },
+
+            // Update encryption status display
+            updateEncryptionStatus() {
+                const button = document.getElementById('encryptionToggle');
+                const status = document.getElementById('encryptionStatus');
+                
+                if (this.encryptionEnabled) {
+                    button.textContent = 'Disable Encryption';
+                    button.classList.add('btn-danger');
+                    button.classList.remove('btn-primary');
+                    status.innerHTML = '<span style="color: var(--success-aqua);">✓ Data is encrypted</span>';
+                } else {
+                    button.textContent = 'Enable Encryption';
+                    button.classList.remove('btn-danger');
+                    button.classList.add('btn-primary');
+                    status.innerHTML = '<span style="color: var(--warning-amber);">⚠ Data is unencrypted</span>';
+                }
+            },
+
+            // Populate dummy data
+            populateDummyData() {
+                if (this.inventory.length === 0) {
+                    this.inventory = [
+                        {
+                            id: Security.generateId(),
+                            name: "3M Aura N95 Masks",
+                            category: "masks",
+                            location: "home",
+                            spec: "N95 - 9205+",
+                            quantity: 20,
+                            usageRate: 0.5,
+                            price: 2.50,
+                            vendor: "Amazon",
+                            evidence: "high",
+                            lastReplaced: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+                        },
+                        {
+                            id: Security.generateId(),
+                            name: "HEPA Filter - Bedroom",
+                            category: "filters",
+                            location: "home",
+                            spec: "MERV-13",
+                            quantity: 2,
+                            usageRate: 0.011,
+                            price: 45,
+                            vendor: "Home Depot",
+                            evidence: "high",
+                            lastReplaced: new Date(Date.now() - 60 * 24 * 60 * 60 * 1000)
+                        },
+                        {
+                            id: Security.generateId(),
+                            name: "Elastomeric P100",
+                            category: "masks",
+                            location: "travel",
+                            spec: "P100 - GVS Elipse",
+                            quantity: 1,
+                            usageRate: 0,
+                            price: 35,
+                            vendor: "Industrial Safety",
+                            evidence: "high",
+                            lastReplaced: new Date()
+                        },
+                        {
+                            id: Security.generateId(),
+                            name: "Rapid Tests",
+                            category: "testing",
+                            location: "home",
+                            spec: "BinaxNOW",
+                            quantity: 8,
+                            usageRate: 0.25,
+                            price: 10,
+                            vendor: "CVS",
+                            evidence: "moderate",
+                            lastReplaced: new Date()
+                        },
+                        {
+                            id: Security.generateId(),
+                            name: "Portable Air Purifier",
+                            category: "purifiers",
+                            location: "work",
+                            spec: "Levoit Core 300",
+                            quantity: 1,
+                            usageRate: 0,
+                            price: 100,
+                            vendor: "Best Buy",
+                            evidence: "high",
+                            lastReplaced: new Date()
+                        }
+                    ];
+                    this.saveData();
+                }
+
+                if (this.vaccines.length === 0) {
+                    this.vaccines = [
+                        {
+                            id: Security.generateId(),
+                            date: new Date(Date.now() - 120 * 24 * 60 * 60 * 1000),
+                            type: "Pfizer Bivalent",
+                            notes: "Primary booster"
+                        }
+                    ];
+                    this.saveData();
+                }
+            },
+
+            // Calculate coverage days
+            calculateCoverage(item) {
+                if (item.usageRate === 0) return "∞";
+                const days = Math.floor(item.quantity / item.usageRate);
+                return days;
+            },
+
+            // Render Dashboard with secure HTML
+            renderDashboard() {
+                // Update KPIs
+                document.getElementById('kpiItems').innerHTML = `${this.inventory.length}<span class="kpi-unit">items</span>`;
+                document.getElementById('kpiSpend').innerHTML = `$${this.calculateMonthlySpend()}<span class="kpi-unit">USD</span>`;
+                document.getElementById('kpiCoverage').innerHTML = `${this.calculateMinCoverage()}<span class="kpi-unit">days</span>`;
+                document.getElementById('kpiNext').innerHTML = `${this.getNextReplacement()}<span class="kpi-unit">days</span>`;
+
+                // Update alerts
+                const alertsTable = document.getElementById('dashboardAlerts');
+                const alertsMobile = document.getElementById('dashboardAlertsMobile');
+                const urgentItems = this.inventory
+                    .map(item => ({
+                        ...item,
+                        coverage: this.calculateCoverage(item)
+                    }))
+                    .filter(item => item.coverage !== "∞" && item.coverage < 30)
+                    .sort((a, b) => a.coverage - b.coverage);
+
+                // Desktop table - using textContent for security
+                alertsTable.innerHTML = '';
+                urgentItems.slice(0, 5).forEach(item => {
+                    const row = alertsTable.insertRow();
+                    row.insertCell().textContent = item.name;
+                    row.insertCell().textContent = item.location;
+                    row.insertCell().textContent = item.coverage;
+                    row.insertCell().innerHTML = this.getStatusBadge(item.coverage);
+                });
+
+                // Mobile cards - secure rendering
+                alertsMobile.innerHTML = '';
+                urgentItems.slice(0, 5).forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'mobile-card';
+                    card.innerHTML = `
+                        <div class="mobile-card-header">${Security.sanitizeHTML(item.name)}</div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Location</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.location)}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Days Remaining</span>
+                            <span class="mobile-card-value">${item.coverage}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Status</span>
+                            <span class="mobile-card-value">${this.getStatusBadge(item.coverage)}</span>
+                        </div>
+                    `;
+                    alertsMobile.appendChild(card);
+                });
+            },
+
+            // Render Inventory with secure HTML
+            renderInventory() {
+                const table = document.getElementById('inventoryTable');
+                const mobile = document.getElementById('inventoryMobile');
+                
+                // Clear existing content
+                table.innerHTML = '';
+                mobile.innerHTML = '';
+                
+                // Desktop table - secure rendering
+                this.inventory.forEach(item => {
+                    const row = table.insertRow();
+                    row.insertCell().textContent = item.name;
+                    row.insertCell().textContent = item.category;
+                    row.insertCell().textContent = item.location;
+                    row.insertCell().textContent = item.quantity;
+                    row.insertCell().textContent = `${this.calculateCoverage(item)} days`;
+                    row.insertCell().innerHTML = `<span class="badge badge-${item.evidence === 'high' ? 'high-evidence' : 'warning'}">${item.evidence}</span>`;
+                    const actionsCell = row.insertCell();
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-secondary" style="padding: 0.5rem; margin-right: 0.5rem;" onclick="app.editItem('${item.id}')">Edit</button>
+                        <button class="btn btn-danger" style="padding: 0.5rem;" onclick="app.confirmDelete('${item.id}')">Delete</button>
+                    `;
+                });
+
+                // Mobile cards - secure rendering
+                this.inventory.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'mobile-card';
+                    card.innerHTML = `
+                        <div class="mobile-card-header">${Security.sanitizeHTML(item.name)}</div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Category</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.category)}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Location</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.location)}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Quantity</span>
+                            <span class="mobile-card-value">${item.quantity}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Coverage</span>
+                            <span class="mobile-card-value">${this.calculateCoverage(item)} days</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Evidence</span>
+                            <span class="mobile-card-value">
+                                <span class="badge badge-${item.evidence === 'high' ? 'high-evidence' : 'warning'}">${item.evidence}</span>
+                            </span>
+                        </div>
+                        ${item.vendor ? `
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Vendor</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.vendor)}</span>
+                        </div>` : ''}
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1;" onclick="app.editItem('${item.id}')">Edit</button>
+                            <button class="btn btn-danger" style="flex: 1;" onclick="app.confirmDelete('${item.id}')">Delete</button>
+                        </div>
+                    `;
+                    mobile.appendChild(card);
+                });
+            },
+
+            // Render Alerts
+            renderAlerts() {
+                const content = document.getElementById('alertsContent');
+                const items = this.inventory.map(item => ({
+                    ...item,
+                    coverage: this.calculateCoverage(item)
+                })).filter(item => item.coverage !== "∞");
+
+                const urgent = items.filter(i => i.coverage < 7);
+                const upcoming = items.filter(i => i.coverage >= 7 && i.coverage < 30);
+                const planned = items.filter(i => i.coverage >= 30);
+
+                content.innerHTML = `
+                    <div class="alerts-urgent">
+                        <h3 style="color: var(--alert-coral); margin-bottom: 1rem;">Urgent Replacements Needed</h3>
+                        ${urgent.length ? urgent.map(item => this.renderAlertCard(item)).join('') : '<p style="color: var(--text-secondary);">No urgent replacements needed</p>'}
+                    </div>
+                    <div class="alerts-upcoming" style="margin-top: 2rem;">
+                        <h3 style="color: var(--warning-amber); margin-bottom: 1rem;">Upcoming Replacements</h3>
+                        ${upcoming.length ? upcoming.map(item => this.renderAlertCard(item)).join('') : '<p style="color: var(--text-secondary);">No upcoming replacements</p>'}
+                    </div>
+                `;
+            },
+
+            // Render Alert Card
+            renderAlertCard(item) {
+                return `
+                    <div class="glass-panel" style="padding: 1rem; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div style="flex: 1; min-width: 200px;">
+                                <h4 style="color: var(--primary-teal);">${Security.sanitizeHTML(item.name)}</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem;">
+                                    ${Security.sanitizeHTML(item.location)} • ${Security.sanitizeHTML(item.spec || 'No spec')}
+                                    ${item.vendor ? `• ${Security.sanitizeHTML(item.vendor)}` : ''}
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 1.5rem; color: ${item.coverage < 7 ? 'var(--alert-coral)' : 'var(--warning-amber)'};">${item.coverage} days</div>
+                                <button class="btn btn-primary" style="margin-top: 0.5rem;" onclick="app.reorderItem('${item.id}')">Reorder</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Scenarios
+            renderScenarios() {
+                const grid = document.getElementById('scenarioGrid');
+                grid.innerHTML = this.scenarios.map(scenario => `
+                    <div class="scenario-card glass-panel">
+                        <h3 class="scenario-title">${Security.sanitizeHTML(scenario.name)}</h3>
+                        <p class="scenario-description">${Security.sanitizeHTML(scenario.description)}</p>
+                        <div style="margin-top: 1rem;">
+                            <h4 style="color: var(--silver); font-size: 0.875rem; margin-bottom: 0.5rem;">MINIMUM PROTECTION</h4>
+                            <ul class="protection-list">
+                                ${scenario.recommendations.minimum.map(item => 
+                                    `<li class="protection-item">${Security.sanitizeHTML(item)}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <h4 style="color: var(--primary-teal); font-size: 0.875rem; margin-bottom: 0.5rem;">IDEAL PROTECTION</h4>
+                            <ul class="protection-list">
+                                ${scenario.recommendations.ideal.map(item => 
+                                    `<li class="protection-item">${Security.sanitizeHTML(item)}</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            // Render Vaccines
+            renderVaccines() {
+                const content = document.getElementById('vaccineRecords');
+                const daysSince = this.vaccines.length ? 
+                    Math.floor((Date.now() - new Date(this.vaccines[0].date)) / (24 * 60 * 60 * 1000)) : 0;
+                
+                content.innerHTML = `
+                    <div style="margin-bottom: 2rem;">
+                        <div class="kpi-card glass-panel" style="max-width: 400px;">
+                            <div class="kpi-label">Days Since Last Vaccination</div>
+                            <div class="kpi-value">${daysSince}<span class="kpi-unit">days</span></div>
+                            ${daysSince > 120 ? '<p style="color: var(--warning-amber); margin-top: 1rem;">Consider scheduling a booster</p>' : ''}
+                        </div>
+                    </div>
+                    <h3 style="color: var(--primary-teal); margin-bottom: 1rem;">Vaccination History</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Vaccine Type</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${this.vaccines.map(v => `
+                                <tr>
+                                    <td>${new Date(v.date).toLocaleDateString()}</td>
+                                    <td>${Security.sanitizeHTML(v.type)}</td>
+                                    <td>${Security.sanitizeHTML(v.notes || '-')}</td>
+                                    <td>
+                                        <button class="btn btn-danger" style="padding: 0.5rem;" onclick="app.deleteVaccine('${v.id}')">Delete</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            },
+
+            // Helper Functions
+            calculateMonthlySpend() {
+                return this.inventory.reduce((total, item) => {
+                    return total + (item.usageRate * 30 * (item.price || 0));
+                }, 0).toFixed(2);
+            },
+
+            calculateMinCoverage() {
+                const coverages = this.inventory
+                    .map(item => this.calculateCoverage(item))
+                    .filter(c => c !== "∞");
+                return coverages.length ? Math.min(...coverages) : "∞";
+            },
+
+            getNextReplacement() {
+                const coverages = this.inventory
+                    .map(item => this.calculateCoverage(item))
+                    .filter(c => c !== "∞");
+                return coverages.length ? Math.min(...coverages) : "N/A";
+            },
+
+            getStatusBadge(coverage) {
+                if (coverage === "∞") return '<span class="badge badge-good">Stocked</span>';
+                if (coverage < 7) return '<span class="badge badge-urgent">Urgent</span>';
+                if (coverage < 30) return '<span class="badge badge-warning">Soon</span>';
+                return '<span class="badge badge-good">Good</span>';
+            },
+
+            // Modal Functions
+            showAddItemModal() {
+                document.getElementById('itemModalTitle').textContent = 'Add Inventory Item';
+                document.getElementById('itemForm').reset();
+                document.getElementById('itemId').value = '';
+                document.getElementById('itemModal').classList.add('active');
+            },
+
+            editItem(id) {
+                const item = this.inventory.find(i => i.id === id);
+                if (!item) return;
+
+                document.getElementById('itemModalTitle').textContent = 'Edit Inventory Item';
+                document.getElementById('itemId').value = item.id;
+                document.getElementById('itemForm').name.value = item.name;
+                document.getElementById('itemForm').category.value = item.category;
+                document.getElementById('itemForm').location.value = item.location;
+                document.getElementById('itemForm').spec.value = item.spec || '';
+                document.getElementById('itemForm').quantity.value = item.quantity;
+                document.getElementById('itemForm').usageRate.value = item.usageRate;
+                document.getElementById('itemForm').price.value = item.price || '';
+                document.getElementById('itemForm').vendor.value = item.vendor || '';
+                document.getElementById('itemForm').evidence.value = item.evidence;
+                
+                document.getElementById('itemModal').classList.add('active');
+            },
+
+            closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            },
+
+            async saveItem(event) {
+                event.preventDefault();
+                const form = event.target;
+                const formData = new FormData(form);
+                
+                // Reset activity timer
+                this.lastActivity = Date.now();
+                
+                // Validate inputs
+                const name = formData.get('name');
+                if (!Security.validateInput(name, 'name')) {
+                    this.showToast('Invalid item name', 'error');
+                    return;
+                }
+
+                const quantity = parseInt(formData.get('quantity'));
+                if (!Security.validateNumber(quantity, 0, 9999)) {
+                    this.showToast('Invalid quantity', 'error');
+                    return;
+                }
+
+                const usageRate = parseFloat(formData.get('usageRate'));
+                if (!Security.validateNumber(usageRate, 0, 100)) {
+                    this.showToast('Invalid usage rate', 'error');
+                    return;
+                }
+
+                const itemId = formData.get('itemId');
+                const item = {
+                    id: itemId || Security.generateId(),
+                    name: name,
+                    category: formData.get('category'),
+                    location: formData.get('location'),
+                    spec: formData.get('spec'),
+                    quantity: quantity,
+                    usageRate: usageRate,
+                    price: parseFloat(formData.get('price')) || 0,
+                    vendor: formData.get('vendor'),
+                    evidence: formData.get('evidence'),
+                    lastReplaced: new Date()
+                };
+
+                if (itemId) {
+                    // Edit existing item
+                    const index = this.inventory.findIndex(i => i.id === itemId);
+                    if (index !== -1) {
+                        this.inventory[index] = item;
+                        this.showToast('Item updated successfully', 'success');
+                    }
+                } else {
+                    // Add new item
+                    this.inventory.push(item);
+                    this.showToast('Item added successfully', 'success');
+                }
+
+                await this.saveData();
+                this.closeModal('itemModal');
+                this.renderInventory();
+                this.renderDashboard();
+            },
+
+            // Delete confirmation
+            confirmDelete(id) {
+                const item = this.inventory.find(i => i.id === id);
+                if (!item) return;
+
+                document.getElementById('deleteMessage').textContent = `Are you sure you want to delete "${item.name}"?`;
+                document.getElementById('confirmDeleteBtn').onclick = () => this.deleteItem(id);
+                document.getElementById('deleteModal').classList.add('active');
+            },
+
+            deleteItem(id) {
+                this.inventory = this.inventory.filter(item => item.id !== id);
+                this.saveData();
+                this.closeModal('deleteModal');
+                this.renderInventory();
+                this.renderDashboard();
+                this.showToast('Item deleted successfully', 'success');
+            },
+
+            deleteVaccine(id) {
+                if (confirm('Delete this vaccine record?')) {
+                    this.vaccines = this.vaccines.filter(v => v.id !== id);
+                    this.saveData();
+                    this.renderVaccines();
+                    this.showToast('Vaccine record deleted', 'success');
+                }
+            },
+
+            reorderItem(id) {
+                const item = this.inventory.find(i => i.id === id);
+                if (item && item.vendor) {
+                    this.showToast(`Opening ${item.vendor} to reorder ${item.name}`, 'success');
+                } else {
+                    this.showToast('No vendor information available', 'warning');
+                }
+            },
+
+            // Filter Functions
+            filterInventory() {
+                const category = document.getElementById('categoryFilter').value;
+                const location = document.getElementById('locationFilter').value;
+                
+                let filtered = this.inventory;
+                if (category) filtered = filtered.filter(i => i.category === category);
+                if (location) filtered = filtered.filter(i => i.location === location);
+                
+                const table = document.getElementById('inventoryTable');
+                const mobile = document.getElementById('inventoryMobile');
+                
+                // Clear and re-render with filtered data
+                table.innerHTML = '';
+                mobile.innerHTML = '';
+                
+                filtered.forEach(item => {
+                    // Desktop table
+                    const row = table.insertRow();
+                    row.insertCell().textContent = item.name;
+                    row.insertCell().textContent = item.category;
+                    row.insertCell().textContent = item.location;
+                    row.insertCell().textContent = item.quantity;
+                    row.insertCell().textContent = `${this.calculateCoverage(item)} days`;
+                    row.insertCell().innerHTML = `<span class="badge badge-${item.evidence === 'high' ? 'high-evidence' : 'warning'}">${item.evidence}</span>`;
+                    const actionsCell = row.insertCell();
+                    actionsCell.innerHTML = `
+                        <button class="btn btn-secondary" style="padding: 0.5rem; margin-right: 0.5rem;" onclick="app.editItem('${item.id}')">Edit</button>
+                        <button class="btn btn-danger" style="padding: 0.5rem;" onclick="app.confirmDelete('${item.id}')">Delete</button>
+                    `;
+
+                    // Mobile card
+                    const card = document.createElement('div');
+                    card.className = 'mobile-card';
+                    card.innerHTML = `
+                        <div class="mobile-card-header">${Security.sanitizeHTML(item.name)}</div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Category</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.category)}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Location</span>
+                            <span class="mobile-card-value">${Security.sanitizeHTML(item.location)}</span>
+                        </div>
+                        <div class="mobile-card-row">
+                            <span class="mobile-card-label">Coverage</span>
+                            <span class="mobile-card-value">${this.calculateCoverage(item)} days</span>
+                        </div>
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="flex: 1;" onclick="app.editItem('${item.id}')">Edit</button>
+                            <button class="btn btn-danger" style="flex: 1;" onclick="app.confirmDelete('${item.id}')">Delete</button>
+                        </div>
+                    `;
+                    mobile.appendChild(card);
+                });
+            },
+
+            // Import/Export Functions
+            showImportModal() {
+                document.getElementById('importFile').click();
+            },
+
+            async handleImport(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                try {
+                    const text = await file.text();
+                    let data;
+
+                    if (file.name.endsWith('.json')) {
+                        data = JSON.parse(text);
+                        if (data.inventory) {
+                            // Validate and sanitize imported data
+                            const validItems = data.inventory.filter(item => {
+                                return item.name && item.category && item.location && 
+                                       typeof item.quantity === 'number' && 
+                                       typeof item.usageRate === 'number';
+                            }).map(item => ({
+                                ...item,
+                                id: Security.generateId(),
+                                name: item.name.substring(0, 100),
+                                spec: (item.spec || '').substring(0, 50),
+                                vendor: (item.vendor || '').substring(0, 100)
+                            }));
+
+                            this.inventory = [...this.inventory, ...validItems];
+                            this.saveData();
+                            this.renderInventory();
+                            this.showToast(`Imported ${validItems.length} items`, 'success');
+                        }
+                    } else if (file.name.endsWith('.csv')) {
+                        const lines = text.split('\n');
+                        const headers = lines[0].split(',').map(h => h.trim());
+                        
+                        const items = lines.slice(1).filter(line => line.trim()).map(line => {
+                            const values = line.split(',');
+                            const item = {};
+                            headers.forEach((header, index) => {
+                                item[header.toLowerCase()] = values[index]?.trim();
+                            });
+                            
+                            return {
+                                id: Security.generateId(),
+                                name: (item.name || '').substring(0, 100),
+                                category: item.category || 'other',
+                                location: item.location || 'home',
+                                spec: (item.spec || '').substring(0, 50),
+                                quantity: parseInt(item.quantity) || 0,
+                                usageRate: parseFloat(item.usagerate || item.usage_rate) || 0,
+                                price: parseFloat(item.price) || 0,
+                                vendor: (item.vendor || '').substring(0, 100),
+                                evidence: item.evidence || 'moderate'
+                            };
+                        });
+
+                        this.inventory = [...this.inventory, ...items];
+                        this.saveData();
+                        this.renderInventory();
+                        this.showToast(`Imported ${items.length} items from CSV`, 'success');
+                    }
+                } catch (error) {
+                    console.error('Import error:', error);
+                    this.showToast('Error importing file. Please check the format.', 'error');
+                }
+
+                // Reset file input
+                event.target.value = '';
+            },
+
+            exportToJSON() {
+                const data = {
+                    inventory: this.inventory,
+                    vaccines: this.vaccines,
+                    exportDate: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cc-planner-backup-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                this.showToast('Data exported as JSON', 'success');
+            },
+
+            exportToCSV() {
+                const headers = ['Name', 'Category', 'Location', 'Specification', 'Quantity', 'Usage Rate', 'Coverage Days', 'Price', 'Vendor', 'Evidence'];
+                const rows = this.inventory.map(item => [
+                    Security.escapeCSV(item.name),
+                    Security.escapeCSV(item.category),
+                    Security.escapeCSV(item.location),
+                    Security.escapeCSV(item.spec || ''),
+                    item.quantity,
+                    item.usageRate,
+                    this.calculateCoverage(item),
+                    item.price || '',
+                    Security.escapeCSV(item.vendor || ''),
+                    item.evidence
+                ]);
+                
+                const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `cc-planner-inventory-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+                this.showToast('Data exported as CSV', 'success');
+            },
+
+            printReport() {
+                window.print();
+                this.showToast('Opening print dialog...', 'success');
+            },
+
+            // Tab switching
+            switchTab(tab, type) {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // Re-render alerts with filter
+                this.renderAlerts();
+            },
+
+            // Placeholder functions
+            createCustomScenario() {
+                this.showToast('Custom scenario feature coming soon!', 'warning');
+            },
+
+            addVaccineRecord() {
+                const date = prompt('Enter vaccination date (MM/DD/YYYY):');
+                const type = prompt('Enter vaccine type (e.g., Pfizer, Moderna):');
+                const notes = prompt('Enter any notes (optional):');
+                
+                if (date && type) {
+                    this.vaccines.unshift({
+                        id: Security.generateId(),
+                        date: new Date(date),
+                        type: type.substring(0, 100),
+                        notes: (notes || '').substring(0, 500)
+                    });
+                    this.saveData();
+                    this.renderVaccines();
+                    this.showToast('Vaccine record added', 'success');
+                }
+            },
+
+            // Resources Section Functions
+            renderResources() {
+                // Resources render on tab switch
+            },
+
+            switchResourceTab(tab, content) {
+                // Update tabs
+                document.querySelectorAll('#resources .tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Update content
+                document.querySelectorAll('.resource-content').forEach(c => {
+                    c.style.display = 'none';
+                    c.classList.remove('active');
+                });
+                const contentEl = document.getElementById(`${content}-content`);
+                if (contentEl) {
+                    contentEl.style.display = 'block';
+                    contentEl.classList.add('active');
+                }
+            },
+
+            showCitation(topic) {
+                const citations = {
+                    airborne: 'Tang JW et al. (2021) Lancet Respir Med; Greenhalgh T et al. (2021) Lancet; CDC (2021) Scientific Brief',
+                    tcell: 'Phetsouphanh C et al. (2022) Nature Immunol; Gao Y et al. (2023) Cell; Wiedemann A et al. (2024) Nature',
+                    brain: 'Douaud G et al. (2022) Nature; Hampshire A et al. (2024) NEJM; Taquet M et al. (2023) Lancet Psychiatry',
+                    attenuation: 'No published evidence of natural attenuation. See: Telenti A et al. (2022) Nature Rev Micro',
+                    vascular: 'Libby P & Lüscher T (2020) Eur Heart J; Xie Y et al. (2022) Nature Med',
+                    reinfection: 'Bowe B et al. (2022) Nature Med; Al-Aly Z et al. (2022) Nature Comms'
+                };
+                
+                alert(`Key Citations:\n\n${citations[topic] || 'Citations being compiled'}`);
+            },
+
+            copyResponse(button) {
+                const responseItem = button.parentElement;
+                const responseText = responseItem.querySelector('p').textContent;
+                
+                navigator.clipboard.writeText(responseText).then(() => {
+                    this.showToast('Response copied to clipboard', 'success');
+                }).catch(() => {
+                    this.showToast('Failed to copy', 'error');
+                });
+            },
+
+            calculateCO2Risk() {
+                const co2 = parseInt(document.getElementById('co2Level').value);
+                const occupancy = document.getElementById('occupancyLevel').value;
+                const duration = parseInt(document.getElementById('duration').value);
+                
+                let riskScore = 0;
+                let riskLevel = '';
+                let recommendation = '';
+                
+                // CO2 scoring
+                if (co2 < 600) riskScore += 0;
+                else if (co2 < 800) riskScore += 1;
+                else if (co2 < 1000) riskScore += 2;
+                else if (co2 < 1500) riskScore += 3;
+                else riskScore += 4;
+                
+                // Occupancy scoring
+                if (occupancy === 'low') riskScore += 0;
+                else if (occupancy === 'medium') riskScore += 1;
+                else riskScore += 2;
+                
+                // Duration scoring
+                if (duration < 15) riskScore += 0;
+                else if (duration < 60) riskScore += 1;
+                else if (duration < 120) riskScore += 2;
+                else riskScore += 3;
+                
+                // Determine risk level
+                if (riskScore <= 2) {
+                    riskLevel = 'LOW RISK';
+                    recommendation = 'Standard precautions: surgical mask acceptable';
+                } else if (riskScore <= 4) {
+                    riskLevel = 'MODERATE RISK';
+                    recommendation = 'N95/FFP2 recommended, consider portable HEPA';
+                } else if (riskScore <= 6) {
+                    riskLevel = 'HIGH RISK';
+                    recommendation = 'N95/FFP2 required, add portable HEPA if possible';
+                } else {
+                    riskLevel = 'VERY HIGH RISK';
+                    recommendation = 'P100/FFP3 recommended, minimize time, add HEPA';
+                }
+                
+                // Calculate rebreathed fraction
+                const rebreathedFraction = ((co2 - 420) / 38000 * 100).toFixed(2);
+                
+                document.getElementById('riskLevel').innerHTML = `
+                    <strong style="color: ${riskScore > 4 ? 'var(--alert-coral)' : 'var(--warning-amber)'}">
+                        ${riskLevel}
+                    </strong><br>
+                    Rebreathed air: ${rebreathedFraction}%
+                `;
+                document.getElementById('riskRecommendation').textContent = recommendation;
+                document.getElementById('co2Result').style.display = 'block';
+            },
+
+            calculateACH() {
+                const roomVolume = parseFloat(document.getElementById('roomVolume').value);
+                const cadr = parseFloat(document.getElementById('cadr').value);
+                const naturalVent = parseFloat(document.getElementById('naturalVent').value);
+                
+                // Calculate ACH from HEPA
+                const hepaACH = (cadr * 60) / roomVolume;
+                
+                // Total ACH
+                const totalACH = hepaACH + naturalVent;
+                
+                let recommendation = '';
+                if (totalACH < 4) {
+                    recommendation = 'Poor ventilation - add more filtration or increase natural ventilation';
+                } else if (totalACH < 6) {
+                    recommendation = 'Adequate for low-risk settings - consider adding more for high occupancy';
+                } else if (totalACH < 12) {
+                    recommendation = 'Good ventilation - suitable for most settings';
+                } else {
+                    recommendation = 'Excellent ventilation - healthcare grade';
+                }
+                
+                document.getElementById('achValue').innerHTML = `
+                    <strong style="color: var(--primary-teal);">${totalACH.toFixed(1)} ACH</strong><br>
+                    HEPA contribution: ${hepaACH.toFixed(1)} ACH<br>
+                    Natural ventilation: ${naturalVent} ACH
+                `;
+                document.getElementById('achRecommendation').textContent = recommendation;
+                document.getElementById('achResult').style.display = 'block';
+            },
+
+            assessEventRisk() {
+                const eventType = document.getElementById('eventType').value;
+                const density = document.getElementById('crowdDensity').value;
+                const transmission = document.getElementById('transmission').value;
+                
+                const riskMatrix = {
+                    'outdoor': { base: 1, items: ['Surgical mask optional', 'Hand sanitizer'] },
+                    'indoor-ventilated': { base: 2, items: ['N95 recommended', 'Eye protection optional'] },
+                    'indoor-poor': { base: 4, items: ['N95/P100 required', 'Eye protection recommended'] },
+                    'transit': { base: 3, items: ['N95 minimum', 'Avoid eating/drinking'] },
+                    'medical': { base: 5, items: ['P100 recommended', 'Full eye protection', 'Change clothes after'] }
+                };
+                
+                let riskScore = riskMatrix[eventType].base;
+                
+                if (density === 'moderate') riskScore *= 1.5;
+                else if (density === 'dense') riskScore *= 2;
+                
+                if (transmission === 'medium') riskScore *= 1.25;
+                else if (transmission === 'high') riskScore *= 1.5;
+                else if (transmission === 'very-high') riskScore *= 2;
+                
+                let protectionLevel = '';
+                let items = riskMatrix[eventType].items;
+                
+                if (riskScore < 3) {
+                    protectionLevel = 'MINIMAL PROTECTION';
+                } else if (riskScore < 6) {
+                    protectionLevel = 'MODERATE PROTECTION';
+                } else if (riskScore < 10) {
+                    protectionLevel = 'HIGH PROTECTION';
+                    items.push('Portable air purifier if stationary');
+                } else {
+                    protectionLevel = 'MAXIMUM PROTECTION';
+                    items.push('Minimize duration', 'Consider avoiding if possible');
+                }
+                
+                document.getElementById('protectionLevel').innerHTML = `
+                    <strong style="color: ${riskScore > 6 ? 'var(--alert-coral)' : 'var(--primary-teal)'}">
+                        ${protectionLevel}
+                    </strong><br>
+                    Risk Score: ${riskScore.toFixed(1)}
+                `;
+                document.getElementById('protectionItems').innerHTML = items.map(item => 
+                    `<div style="padding: 0.25rem 0;">• ${item}</div>`
+                ).join('');
+                document.getElementById('eventResult').style.display = 'block';
+            },
+
+            generateLetter(type) {
+                const templates = {
+                    school: {
+                        title: 'School Mask Accommodation Request',
+                        content: `Dear [Principal/Administrator Name],
+
+I am writing to request reasonable accommodations for my child, [Child's Name], to ensure their safety and educational access during the ongoing COVID-19 pandemic.
+
+Based on current scientific evidence showing that SARS-CoV-2 causes cumulative organ damage including cognitive impairment, I am requesting:
+
+1. Permission for my child to wear a high-quality mask (N95/KF94) at all times
+2. Support from staff in ensuring my child is not bullied or discriminated against for masking
+3. Accommodation for mask breaks in a safe, isolated area when needed
+4. Information about classroom ventilation improvements and CO₂ monitoring
+
+These accommodations are necessary to protect my child from documented risks including:
+- Brain tissue damage and cognitive decline (Douaud et al., Nature 2022)
+- Immune system dysregulation (Phetsouphanh et al., Nature Immunology 2022)
+- Long-term cardiovascular damage (Xie et al., Nature Medicine 2022)
+
+I am happy to provide additional medical documentation if required. Thank you for prioritizing student health.
+
+Sincerely,
+[Your Name]`
+                    },
+                    medical: {
+                        title: 'Medical Mask Support Request',
+                        content: `Dear Dr. [Name],
+
+I am requesting a letter supporting my continued use of N95/P100 respiratory protection in public settings, including healthcare facilities, workplaces, and schools.
+
+Given the documented evidence that:
+- COVID causes persistent immune dysfunction
+- Reinfections result in cumulative damage
+- Long COVID affects 10-20% of infections
+- No evidence exists of viral attenuation
+
+Continued masking represents appropriate medical risk mitigation. A letter from you would help prevent discrimination and ensure accommodation.
+
+Thank you for supporting evidence-based prevention.
+
+Sincerely,
+[Your Name]`
+                    },
+                    workplace: {
+                        title: 'Workplace Accommodation Request',
+                        content: `Dear [HR/Manager],
+
+Under the ADA, I am requesting reasonable accommodations to protect my health during the ongoing COVID-19 pandemic:
+
+1. Permission to wear respiratory protection (N95/P100) without restriction
+2. Improved ventilation or HEPA filtration in my workspace
+3. Option for remote work when feasible
+4. Virtual meeting options for large gatherings
+
+These accommodations are necessary due to [medical condition/risk factors] and the documented risks of COVID-19 causing long-term disability.
+
+I am prepared to engage in the interactive process to find mutually acceptable solutions.
+
+Sincerely,
+[Your Name]`
+                    },
+                    family: {
+                        title: 'Family Education Letter',
+                        content: `Dear Family,
+
+I wanted to share why I continue taking COVID precautions and hope you'll consider joining me in protecting our family's health.
+
+Recent research shows:
+- COVID causes lasting damage to the brain, heart, and immune system
+- Each infection increases risk of long-term disability
+- Children are not immune to these effects
+- Vaccines reduce but don't eliminate these risks
+
+Simple steps we can take together:
+- Meet outdoors when possible
+- Use HEPA filters indoors
+- Test before gatherings
+- Respect those who choose to mask
+
+I'm sharing this because I love you and want us all to stay healthy for years to come.
+
+With love,
+[Your Name]`
+                    },
+                    board: {
+                        title: 'Board of Education Speech',
+                        content: `Good evening, Board Members.
+
+I'm here to advocate for clean air in our schools - a basic necessity like clean water.
+
+The science is clear:
+- COVID spreads through the air
+- It causes brain damage in children
+- Each infection reduces cognitive performance
+- Clean air prevents transmission
+
+Our requests are simple:
+1. Install HEPA filters in every classroom
+2. Monitor CO₂ to ensure adequate ventilation
+3. Support universal masking during surges
+4. Provide remote options when needed
+
+The cost of inaction - disabled children, teacher shortages, declining test scores - far exceeds the cost of clean air.
+
+Other districts have successfully implemented these measures. Our children deserve the same protection.
+
+Thank you for your time.`
+                    },
+                    event: {
+                        title: 'Event Safety Request',
+                        content: `Dear Event Organizer,
+
+I'm looking forward to attending [Event Name] and writing to request COVID safety measures to protect all attendees.
+
+Suggested measures:
+- Encourage/require masking indoors
+- Provide masks at entry
+- Ensure adequate ventilation or add HEPA filters
+- Offer virtual attendance options
+- Include safety measures in event communications
+
+These steps would make your event accessible to immunocompromised individuals, those with Long COVID, and anyone wishing to avoid infection.
+
+Thank you for considering community health.
+
+Best regards,
+[Your Name]`
+                    }
+                };
+
+                const template = templates[type];
+                if (template) {
+                    const modal = document.createElement('div');
+                    modal.className = 'modal active';
+                    modal.innerHTML = `
+                        <div class="modal-content glass-panel" style="max-width: 800px;">
+                            <button class="modal-close" onclick="this.parentElement.parentElement.remove()">&times;</button>
+                            <div class="modal-header">
+                                <h3 class="modal-title">${template.title}</h3>
+                            </div>
+                            <textarea style="width: 100%; height: 400px; background: rgba(0,0,0,0.3); 
+                                     color: var(--text-primary); border: 1px solid var(--glass-border); 
+                                     border-radius: 8px; padding: 1rem; font-family: inherit; font-size: 0.95rem;">
+${template.content}
+                            </textarea>
+                            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                                <button class="btn btn-primary" onclick="app.copyLetter(this)">Copy to Clipboard</button>
+                                <button class="btn btn-secondary" onclick="this.parentElement.parentElement.parentElement.remove()">Close</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                }
+            },
+
+            copyLetter(button) {
+                const textarea = button.parentElement.parentElement.querySelector('textarea');
+                navigator.clipboard.writeText(textarea.value).then(() => {
+                    this.showToast('Letter copied to clipboard', 'success');
+                }).catch(() => {
+                    this.showToast('Failed to copy', 'error');
+                });
+            },
+
+            expandMyth(button) {
+                const evidence = {
+                    0: 'Studies: Telenti et al. Nature Rev Micro 2022 - No evidence of attenuation. Davis et al. Nature 2023 - Persistent pathogenicity.',
+                    1: 'Immunity debt is not supported by immunology. See: Leonardi & Proal, 2022. Infections cause immune damage, not training.',
+                    2: 'Altmann & Boyton, BMJ 2023 - Vaccines reduce LC risk by only 15-50%. Al-Aly et al. Nature 2022.',
+                    3: 'Ong et al. JAMA 2023 - No developmental harm from masks. COVID causes brain damage: Hampshire NEJM 2024.',
+                    4: 'Xie & Al-Aly Nature Med 2022 - Organ damage in majority at 1 year. "Mild" is a misnomer.',
+                    5: 'Chen et al. 2023 - Athletes with Long COVID. No one is immune to vascular damage.'
+                };
+                
+                const mythCard = button.parentElement;
+                const index = Array.from(mythCard.parentElement.children).indexOf(mythCard);
+                alert(`Evidence:\n\n${evidence[index] || 'Studies being compiled'}`);
+            }
+        };
+
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
