@@ -1,0 +1,88 @@
+{
+  "name": "CC Planner Pro",
+  "short_name": "CC Planner",
+  "description": "Protection readiness and planning system for airborne-infection precautions. Track supplies, plan activities, and see what you need. All data stays on your device.",
+  "id": "cc-planner-pro",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0a1214",
+  "theme_color": "#0a1214",
+  "orientation": "any",
+  "lang": "en-US",
+  "dir": "ltr",
+  "categories": [
+    "health",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add inventory item",
+      "short_name": "Add item",
+      "description": "Add a new item to your inventory",
+      "url": "./index.html?page=inventory&action=add",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "short_name": "Alerts",
+      "description": "Items that need attention",
+      "url": "./index.html?page=alerts",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Plan an activity",
+      "short_name": "Plan",
+      "description": "Get a packing and preparation plan",
+      "url": "./index.html?page=planner",
+      "icons": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}
