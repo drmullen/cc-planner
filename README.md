@@ -4,8 +4,8 @@
 
 **Version 2.1.0** (revised August 8, 2026)
 
-**Live site:** https://etc-lab.github.io/cc-planner-pro/
-**Launch the app:** https://etc-lab.github.io/cc-planner-pro/app/
+**Live site:** https://drmullen.github.io/cc-planner/
+**Launch the app:** https://drmullen.github.io/cc-planner/app/
 
 ---
 
@@ -44,7 +44,7 @@ CC Planner Pro can summarize conditions that generally raise or lower exposure o
 ## Repository structure
 
 ```text
-cc-planner-pro/
+cc-planner/
 ├── index.html          Public product page (GitHub Pages root)
 ├── app/
 │   ├── index.html      The CC Planner Pro application (single file)
@@ -60,15 +60,15 @@ cc-planner-pro/
 
 Plain static files. No build step, no package manager, no server-side code.
 
-Enable GitHub Pages for this repository from the `main` branch, root folder. The site publishes to `https://etc-lab.github.io/cc-planner-pro/`; the app lives at `/cc-planner-pro/app/`. `.nojekyll` is included so nothing is filtered by Jekyll.
+Enable GitHub Pages for this repository from the `main` branch, root folder. The site publishes to `https://drmullen.github.io/cc-planner/`; the app lives at `/cc-planner/app/`. `.nojekyll` is included so nothing is filtered by Jekyll.
 
-All paths in both the page and the app are relative, so the project subpath works without modification, and the app can also be served from any other directory or a domain root unchanged. The service worker registers from `app/` and therefore scopes itself to `/cc-planner-pro/app/` — it does not control the product page at `/cc-planner-pro/`.
+All paths in both the page and the app are relative, so the project subpath works without modification, and the app can also be served from any other directory or a domain root unchanged. The service worker registers from `app/` and therefore scopes itself to `/cc-planner/app/` — it does not control the product page at `/cc-planner/`.
 
 Service workers and PWA installation require a secure origin (HTTPS or `localhost`); the product page itself also opens correctly from `file://`.
 
 ## Author and publisher
 
-Designed by **Dr. Sean P. Mullen**. Published by **Mind to Motion Studios, LLC**. © 2026 Mind to Motion Studios, LLC, as declared in the application's own metadata. Hosting this repository in the `etc-lab` organization does not transfer or alter ownership.
+Designed by **Dr. Sean P. Mullen**. Published by **Mind to Motion Studios, LLC**. © 2026 Mind to Motion Studios, LLC, as declared in the application's own metadata. The canonical source repository is `https://github.com/drmullen/cc-planner`.
 
 ## Citation
 
